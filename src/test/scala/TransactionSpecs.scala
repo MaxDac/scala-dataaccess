@@ -29,7 +29,7 @@ class TransactionSpecs extends AsyncFlatSpec {
             StringField[Payment]("Id", "Id", (p, id) => p.id = id),
             StringField[Payment]("Code", "Code", (p, code) => p.code = code),
             DecimalField[Payment]("Amount", "Amount", (p, amount) => p.amount = amount)
-        ) from "SIUCREDITO.PAYMENTS" where s"Code = '$paymentCode'"
+        ) from "{stream-name}.PAYMENTS" where s"Code = '$paymentCode'"
 
         (for {
             _ <- DataAccessComponent.transactionScope { dac =>
@@ -55,7 +55,7 @@ class TransactionSpecs extends AsyncFlatSpec {
             StringField[Payment]("Id", "Id", (p, id) => p.id = id),
             StringField[Payment]("Code", "Code", (p, code) => p.code = code),
             DecimalField[Payment]("Amount", "Amount", (p, amount) => p.amount = amount)
-        ) from "SIUCREDITO.PAYMENTS" where s"Code = '$paymentCode'"
+        ) from "{stream-name}.PAYMENTS" where s"Code = '$paymentCode'"
 
         (for {
             _ <- DataAccessComponent.transactionScope { dac =>

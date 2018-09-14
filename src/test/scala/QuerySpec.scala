@@ -6,10 +6,10 @@ import org.scalatest.AsyncFlatSpec
 import scala.concurrent.ExecutionContextExecutor
 
 private object Fornitura {
-    val idForn: StringField[Fornitura] = StringField[Fornitura]("FORN.FORN_FORNITURA_ID", "IdFORN", (f, v) => f.Id = v)
-    val codForn: StringField[Fornitura] = StringField[Fornitura]("FORN.FORN_FORNITURA_COD", "CodFORN", (f, v) => f.Code = v)
+    val idForn: StringField[Fornitura] = StringField[Fornitura]("{id-column-name}", "IdFORN", (f, v) => f.Id = v)
+    val codForn: StringField[Fornitura] = StringField[Fornitura]("{cod-column-name}", "CodFORN", (f, v) => f.Code = v)
 
-    val table = "CONF_FORNITURE FORN"
+    val table = "{table-name}"
 }
 private case class Fornitura(
                                 var Id: String = "",
@@ -17,12 +17,12 @@ private case class Fornitura(
                             )
 
 private object Pagamento {
-    val idPag: StringField[Pagamento] = StringField[Pagamento]("PAG.PAG_PAGAMENTO_ID", "IdPAG", (f, v) => f.Id = v)
-    val amountPag: DecimalField[Pagamento] = DecimalField[Pagamento]("PAG.PAG_IMPORTO", "ImportoPAG", (f, v) => f.Amount = v)
-    val fornituraCode: StringField[Pagamento] = StringField[Pagamento]("FORN.FORN_FORNITURA_COD", "CodFORN", (f, v) => f.fornituraCode = v)
+    val idPag: StringField[Pagamento] = StringField[Pagamento]("{id-column-name}", "IdPAG", (f, v) => f.Id = v)
+    val amountPag: DecimalField[Pagamento] = DecimalField[Pagamento]("{another-column-name}", "ImportoPAG", (f, v) => f.Amount = v)
+    val fornituraCode: StringField[Pagamento] = StringField[Pagamento]("{cod-column-name}", "CodFORN", (f, v) => f.fornituraCode = v)
 
-    val table = "CRD_PAGAMENTI PAG"
-    val tableFornituraRelation = "CRD_PAGAMENTI_REL_FORNITURE PAUT"
+    val table = "{table-name}"
+    val tableFornituraRelation = "{table-name-2}"
 }
 private case class Pagamento (
                                 var Id: String = "",
@@ -58,10 +58,9 @@ class QuerySpec extends AsyncFlatSpec {
             Pagamento.tableFornituraRelation,
             Pagamento.table,
         ) where (
-            "FORN.FORN_FORNITURA_COD = '262937069001'",
-            "FORN.FORN_FORNITURA_ID = PAUT.FORN_FORNITURA_ID",
-            "PAUT.PAG_PAGAMENTO_ID = PAG.PAG_PAGAMENTO_ID",
-            "PAUT.EDW_PARTITION_DOC = PAG.EDW_PARTITION_DOC"
+            "{where-clause-1}",
+            "{where-clause-2}",
+            "{where-clause-n}",
         )
 
         query.perform().map(list => {
@@ -85,10 +84,9 @@ class QuerySpec extends AsyncFlatSpec {
                 Pagamento.tableFornituraRelation,
                 Pagamento.table,
             ) where (
-                "FORN.FORN_FORNITURA_COD = '262937069001'",
-                "FORN.FORN_FORNITURA_ID = PAUT.FORN_FORNITURA_ID",
-                "PAUT.PAG_PAGAMENTO_ID = PAG.PAG_PAGAMENTO_ID",
-                "PAUT.EDW_PARTITION_DOC = PAG.EDW_PARTITION_DOC"
+            "{where-clause-1}",
+            "{where-clause-2}",
+            "{where-clause-n}",
             ) performWithin scope
         }
 
@@ -104,9 +102,9 @@ class QuerySpec extends AsyncFlatSpec {
     "The literal query" should s"return 9 items inside a scope" in {
         val query = DataAccessComponent scope { scope =>
             Query() selectLiteral (
-                "FORN.FORN_FORNITURA_COD CodFORN",
-                "PAG.PAG_PAGAMENTO_ID IdPAG",
-                "PAG.PAG_IMPORTO ImportoPAG"
+            "{select-clause-1}",
+            "{select-clause-2}",
+            "{select-clause-n}",
             ) withParser { set =>
                 new Pagamento(
                     Id = set.getString("IdPAG"),
@@ -118,10 +116,9 @@ class QuerySpec extends AsyncFlatSpec {
                 Pagamento.tableFornituraRelation,
                 Pagamento.table,
             ) where (
-                "FORN.FORN_FORNITURA_COD = '262937069001'",
-                "FORN.FORN_FORNITURA_ID = PAUT.FORN_FORNITURA_ID",
-                "PAUT.PAG_PAGAMENTO_ID = PAG.PAG_PAGAMENTO_ID",
-                "PAUT.EDW_PARTITION_DOC = PAG.EDW_PARTITION_DOC"
+            "{where-clause-1}",
+            "{where-clause-2}",
+            "{where-clause-n}",
             ) performWithin scope
         }
 
